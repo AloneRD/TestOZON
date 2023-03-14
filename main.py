@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers.payment_system import payment_router
+from app.routers.payment_system import payment_router
 
 
 def append_routers(app: FastAPI) -> None:
@@ -10,6 +10,7 @@ def create_app() -> FastAPI:
     app = FastAPI()
     append_routers(app)
     return app
+
 
 if __name__ == '__main__':
     import uvicorn
