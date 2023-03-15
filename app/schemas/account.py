@@ -20,10 +20,17 @@ class AccountShema(BaseModel):
 class BalanceShema(BaseModel):
     user_id: int
     summa: int
-    method: Literal['plus', 'minus']
 
     @validator('summa')
     def summa_must_positiv_integer(cls, v):
         if v < 0:
             raise ValueError("Сумма пополнения не может быть отризательной")
         return v
+
+
+class BalanceShemaPlusMinus(BalanceShema):
+    method: Literal['plus', 'minus']
+
+
+class BalanceShemaTransfer(BalanceShema):
+    user_id_to: int
