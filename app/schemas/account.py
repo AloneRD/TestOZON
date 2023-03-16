@@ -1,5 +1,5 @@
-from pydantic import BaseModel, validator, ValidationError
-from typing import Optional, Literal
+from pydantic import BaseModel, validator
+from typing import Literal
 
 
 class AccountShema(BaseModel):
@@ -12,7 +12,7 @@ class AccountShema(BaseModel):
         if v < 0:
             raise ValueError("Баланс не может быть отризательным")
         return v
-    
+
     class Config:
         orm_mode = True
 

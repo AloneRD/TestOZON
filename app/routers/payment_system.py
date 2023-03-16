@@ -39,7 +39,7 @@ async def top_up_balance(requisites: BalanceShemaPlusMinus, session: AsyncSessio
 
     if account is None:
         raise HTTPException(status_code=400, detail=f'Пользователь с id {user_id} не найден')
-    
+
     await session.commit()
     return valid_date
 
@@ -53,7 +53,7 @@ async def transfer_money(requisites: BalanceShemaTransfer, session: AsyncSession
     result = await session.execute(select(Account).where(Account.id == user_id))
     user_from = result.scalar()
     if user_from.balance - summa < 0:
-         raise HTTPException(status_code=400, detail=f'Недостаточно средств')
+        raise HTTPException(status_code=400, detail='Недостаточно средств')
     await session.execute(
         update(Account).where(Account.id == user_id).values({'balance': Account.balance - summa})
     )
