@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+      image: "postgres:14.5-alpine"
+      container_name: "pg_db"
+      restart: on-failure
+      volumes:
+        - pgdata:/var/lib/postgresql/data
+      env_file: ./.env
+      environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      ports:
+        - "${DB_PORT}:${DB_PORT}"
+
+  web:
+      build: .
+      container_name: "web"
+      ports:
+      - 8000:8000
+      depends_on:
+        - db
+      env_file: ./.env
+      command: uvicorn main:create_app --host 0.0.0.0 --reload
+
+  celery_worker:
+    build: .
+    container_name: "celery"
+    depends_on:
+      - web
+      - db
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    env_file: ./.env
+    command: celery -A app.tasks worker -B -l info
+
+  redis:
+    image: redis:6-alpine
+    
+  
+volumes:
+  pgdata:
+
